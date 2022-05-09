@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/fsnotify/fsnotify v1.5.4
-	github.com/xiaoyang-chen/zapx v0.0.2
+	github.com/xiaoyang-chen/zapx v0.0.3
 )
 
 require (

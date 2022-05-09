@@ -20,8 +20,8 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5CcY=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
-github.com/xiaoyang-chen/zapx v0.0.2 h1:TU98ZWt5VP3GJsB3/WJZC3Q1rgTkaJX6kMzApQyRcMI=
-github.com/xiaoyang-chen/zapx v0.0.2/go.mod h1:hwNU0081Uu5rEF/jBk+5wIDs1qXkS+d9damX0YKV1nU=
+github.com/xiaoyang-chen/zapx v0.0.3 h1:EHfGWQQ9Z9/suFlgJ7yvdYVEhKdBIHbTnoYWV+omVDs=
+github.com/xiaoyang-chen/zapx v0.0.3/go.mod h1:hwNU0081Uu5rEF/jBk+5wIDs1qXkS+d9damX0YKV1nU=
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 go.uber.org/atomic v1.7.0 h1:ADUqmZGgLDDfbSL9ZmPxKTybcoEYHgpYfELNoN+7hsw=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
