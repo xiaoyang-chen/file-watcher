@@ -1,2 +1,3 @@
-# filewatcher
-this is a file watcher
+# file-watcher
+
+## encapsulation of github.com/fsnotify/fsnotify, must be using with github.com/xiaoyang-chen/zapx/log
