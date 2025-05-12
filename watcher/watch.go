@@ -122,7 +122,7 @@ func NewFsnotifyWatcher(logHandler logger.Logger, eventHook EventHookFunc, fsEve
 	return
 }
 
-// NewRadovskybwatcherWatcher watchGap 循环
+// NewRadovskybwatcherWatcher watchGap is the sleep time in two loop scan, it will run cyclically as "scan -> sleep(watchGap) -> scan -> ..."
 func NewRadovskybwatcherWatcher(logHandler logger.Logger, eventHook EventHookFunc, watchGap time.Duration, fsEventHandlers ...FSEventHandler) (watcher Watcher, err error) {
 
 	if logHandler == nil {
