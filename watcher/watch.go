@@ -81,10 +81,6 @@ func NewFsnotifyWatcher(logHandler logger.Logger, eventHook EventHookFunc, fsEve
 	if logHandler == nil {
 		logHandler = logger.NewNoop()
 	}
-	if len(fsEventHandlers) == 0 {
-		err = errors.New("len(fsEventHandlers) can not be 0")
-		return
-	}
 	fw, err := fsnotify.NewWatcher()
 	if err != nil {
 		err = errors.WithStack(err)
@@ -105,7 +101,7 @@ func NewFsnotifyWatcher(logHandler logger.Logger, eventHook EventHookFunc, fsEve
 					return
 				}
 				var etWarpper = newFsnotifyEventWrapper(et)
-				wrapper.logHandler.Info("event happen", etWarpper.String())
+				wrapper.logHandler.Info("event happen ", etWarpper.String())
 				if wrapper.eventHook != nil {
 					var isSkip = false
 					if etWarpper, isSkip = wrapper.eventHook(etWarpper); isSkip {
@@ -132,10 +128,6 @@ func NewRadovskybwatcherWatcher(logHandler logger.Logger, eventHook EventHookFun
 	if logHandler == nil {
 		logHandler = logger.NewNoop()
 	}
-	if len(fsEventHandlers) == 0 {
-		err = errors.New("len(fsEventHandlers) can not be 0")
-		return
-	}
 	var wrapper = radovskybwatcherWatcherWrapper{
 		logHandler:   logHandler,
 		eventHook:    eventHook,
@@ -153,7 +145,7 @@ func NewRadovskybwatcherWatcher(logHandler logger.Logger, eventHook EventHookFun
 					return
 				}
 				var etWarpper = newRadovskybwatcherEventWrapper(et)
-				wrapper.logHandler.Info("event happen", etWarpper.String())
+				wrapper.logHandler.Info("event happen ", etWarpper.String())
 				if wrapper.eventHook != nil {
 					var isSkip = false
 					if etWarpper, isSkip = wrapper.eventHook(etWarpper); isSkip {
@@ -201,3 +193,5 @@ func eventTwoPartHandles(et Event, handles []FSEventHandler) {
 		go handles[l].FSHandle(et)
 	}
 }
+
+func emptyFuncForTest() {}
