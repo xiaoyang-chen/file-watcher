@@ -41,6 +41,7 @@ var _mapRadovskybwatcherOp = map[radovskybwatcher.Op]Op{
 }
 
 type Event interface {
+	// Name return the path to the file or directory.
 	Name() string
 	Has(op Op) bool
 	String() string
@@ -64,7 +65,7 @@ type radovskybwatcherEventWrapper struct {
 	wrapOp Op // see _mapRadovskybwatcherOp
 }
 
-func (w radovskybwatcherEventWrapper) Name() string      { return w.e.Name() }
+func (w radovskybwatcherEventWrapper) Name() string      { return w.e.Path }
 func (w radovskybwatcherEventWrapper) String() string    { return w.e.String() }
 func (w radovskybwatcherEventWrapper) Has(op Op) bool    { return w.wrapOp.Has(op) }
 func (w radovskybwatcherEventWrapper) SetOp(op Op) Event { w.wrapOp = op; return w }
