@@ -1,7 +1,6 @@
 package watcher
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -14,12 +13,12 @@ import (
 // the tests and returns a function that is used as
 // a teardown function when the tests are done.
 func setup(t testing.TB) (string, func()) {
-	testDir, err := ioutil.TempDir(".", "")
+	testDir, err := os.MkdirTemp(".", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(testDir, "file.txt"),
+	err = os.WriteFile(filepath.Join(testDir, "file.txt"),
 		[]byte{}, 0755)
 	if err != nil {
 		t.Fatal(err)
@@ -29,12 +28,12 @@ func setup(t testing.TB) (string, func()) {
 
 	for _, f := range files {
 		filePath := filepath.Join(testDir, f)
-		if err := ioutil.WriteFile(filePath, []byte{}, 0755); err != nil {
+		if err := os.WriteFile(filePath, []byte{}, 0755); err != nil {
 			t.Fatal(err)
 		}
 	}
 
-	err = ioutil.WriteFile(filepath.Join(testDir, ".dotfile"),
+	err = os.WriteFile(filepath.Join(testDir, ".dotfile"),
 		[]byte{}, 0755)
 	if err != nil {
 		t.Fatal(err)
@@ -46,7 +45,7 @@ func setup(t testing.TB) (string, func()) {
 		t.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(testDirTwo, "file_recursive.txt"),
+	err = os.WriteFile(filepath.Join(testDirTwo, "file_recursive.txt"),
 		[]byte{}, 0755)
 	if err != nil {
 		t.Fatal(err)
@@ -523,14 +522,14 @@ func TestTriggerEvent(t *testing.T) {
 					event.Name())
 			}
 		case <-time.After(time.Millisecond * 250):
-			t.Fatal("received no event from Event channel")
+			t.Error("received no event from Event channel")
 		}
 	}()
 
 	go func() {
 		// Start the watching process.
 		if err := w.Start(time.Millisecond * 100); err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 
@@ -559,7 +558,7 @@ func TestEventAddFile(t *testing.T) {
 
 	for f := range files {
 		filePath := filepath.Join(testDir, f)
-		if err := ioutil.WriteFile(filePath, []byte{}, 0755); err != nil {
+		if err := os.WriteFile(filePath, []byte{}, 0755); err != nil {
 			t.Error(err)
 		}
 	}
@@ -607,7 +606,7 @@ func TestEventAddFile(t *testing.T) {
 	go func() {
 		// Start the watching process.
 		if err := w.Start(time.Millisecond * 100); err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 
@@ -676,7 +675,7 @@ func TestEventDeleteFile(t *testing.T) {
 	go func() {
 		// Start the watching process.
 		if err := w.Start(time.Millisecond * 100); err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 
@@ -729,14 +728,14 @@ func TestEventRenameFile(t *testing.T) {
 			}
 
 		case <-time.After(time.Millisecond * 250):
-			t.Fatal("received no rename event")
+			t.Error("received no rename event")
 		}
 	}()
 
 	go func() {
 		// Start the watching process.
 		if err := w.Start(time.Millisecond * 100); err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 
@@ -807,7 +806,7 @@ func TestEventChmodFile(t *testing.T) {
 	go func() {
 		// Start the watching process.
 		if err := w.Start(time.Millisecond * 100); err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 
@@ -829,7 +828,7 @@ func TestWatcherStartWhenAlreadyRunning(t *testing.T) {
 	go func() {
 		err := w.Start(time.Millisecond * 100)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 	w.Wait()
@@ -855,7 +854,7 @@ func BenchmarkEventRenameFile(b *testing.B) {
 	go func() {
 		// Start the watching process.
 		if err := w.Start(time.Millisecond); err != nil {
-			b.Fatal(err)
+			b.Error(err)
 		}
 	}()
 
