@@ -599,7 +599,8 @@ func (w *Watcher) pollEvents(files map[string]os.FileInfo, evt chan Event, cance
 	var oldInfo os.FileInfo
 	for path, info := range files {
 		if oldInfo = w.files[path]; oldInfo == nil { // A file was created.
-			// todo first scan, if file renames, will send removed event, second scan, file wrote by created, will only send created event, if time of rename and write is more than time of one scan. so it will not send write event. should we send write event when create, or just setting a bigger sleep gap between two scan?
+			// first scan, if file renames, will send removed event, second scan, file wrote by created, will only send created event, if time of rename and write is more than time of one scan. so it will not send write event. should we send write event when create, or just setting a bigger sleep gap between two scan?
+			// now we send write event when create if file size > 0. see the code below when create events are sended
 			creates[path] = info
 			continue
 		}
@@ -644,6 +645,14 @@ func (w *Watcher) pollEvents(files map[string]os.FileInfo, evt chan Event, cance
 		case <-cancel:
 			return
 		case evt <- Event{Create, path, "", info}:
+		}
+		// if file size > 0, we also send write event
+		if info.Size() > 0 {
+			select {
+			case <-cancel:
+				return
+			case evt <- Event{Write, path, "", info}:
+			}
 		}
 	}
 	for path, info := range removes {
