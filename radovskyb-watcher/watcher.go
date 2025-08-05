@@ -427,12 +427,19 @@ func (w *Watcher) Ignore(paths ...string) (err error) {
 func (w *Watcher) WatchedFiles() (files map[string]os.FileInfo) {
 
 	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	files = make(map[string]os.FileInfo, len(w.files))
+	files = make(map[string]fs.FileInfo, len(w.files))
 	for k, v := range w.files {
 		files[k] = v
 	}
+	w.mu.Unlock()
+	return
+}
+
+func (w *Watcher) GetWatchedFileInfoByPath(path string) (fileInfo os.FileInfo) {
+
+	w.mu.Lock()
+	fileInfo = w.files[path]
+	w.mu.Unlock()
 	return
 }
 
@@ -582,15 +589,13 @@ func (w *Watcher) Start(d time.Duration) (err error) {
 
 func (w *Watcher) pollEvents(files map[string]os.FileInfo, evt chan Event, cancel chan struct{}) {
 
-	w.mu.Lock()
-	defer w.mu.Unlock()
 	// Store create and remove events for use to check for rename events.
 	var (
 		creates = make(map[string]os.FileInfo, len(files))
 		removes = make(map[string]os.FileInfo, len(files))
 	)
 	// Check for removed files.
-	for path, info := range w.files {
+	for path, info := range w.WatchedFiles() {
 		if files[path] == nil {
 			removes[path] = info
 		}
@@ -598,7 +603,7 @@ func (w *Watcher) pollEvents(files map[string]os.FileInfo, evt chan Event, cance
 	// Check for created files, writes and chmods.
 	var oldInfo os.FileInfo
 	for path, info := range files {
-		if oldInfo = w.files[path]; oldInfo == nil { // A file was created.
+		if oldInfo = w.GetWatchedFileInfoByPath(path); oldInfo == nil { // A file was created.
 			// first scan, if file renames, will send removed event, second scan, file wrote by created, will only send created event, if time of rename and write is more than time of one scan. so it will not send write event. should we send write event when create, or just setting a bigger sleep gap between two scan?
 			// now we send write event when create if file size > 0. see the code below when create events are sended
 			creates[path] = info
