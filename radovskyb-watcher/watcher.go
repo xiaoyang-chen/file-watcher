@@ -348,7 +348,13 @@ func (w *Watcher) listRecursive(name string) (fileList map[string]os.FileInfo, e
 func (w *Watcher) Remove(name string) (err error) {
 
 	w.mu.Lock()
-	defer w.mu.Unlock()
+	err = w.remove(name)
+	w.mu.Unlock()
+	return
+}
+
+// remove removes either a single file or directory from the file's list but without lock
+func (w *Watcher) remove(name string) (err error) {
 
 	if name, err = filepath.Abs(name); err != nil {
 		return
@@ -373,12 +379,17 @@ func (w *Watcher) Remove(name string) (err error) {
 	return
 }
 
-// RemoveRecursive removes either a single file or a directory recursively from
-// the file's list.
+// RemoveRecursive removes either a single file or a directory recursively from the file's list.
 func (w *Watcher) RemoveRecursive(name string) (err error) {
 
 	w.mu.Lock()
-	defer w.mu.Unlock()
+	err = w.removeRecursive(name)
+	w.mu.Unlock()
+	return
+}
+
+// removeRecursive removes either a single file or a directory recursively from the file's list but without lock
+func (w *Watcher) removeRecursive(name string) (err error) {
 
 	if name, err = filepath.Abs(name); err != nil {
 		return
@@ -394,8 +405,7 @@ func (w *Watcher) RemoveRecursive(name string) (err error) {
 	if !info.IsDir() {
 		return
 	}
-	// If it's a directory, delete all of it's contents recursively
-	// from w.files.
+	// If it's a directory, delete all of it's contents recursively from w.files.
 	for path := range w.files {
 		if strings.HasPrefix(path, name) {
 			delete(w.files, path)
@@ -485,12 +495,11 @@ func (w *Watcher) retrieveFileList() (fileList map[string]os.FileInfo) {
 		if recursive {
 			if list, err = w.listRecursive(name); err != nil {
 				if os.IsNotExist(err) {
-					w.mu.Unlock()
-					if name == err.(*os.PathError).Path {
+					// panic: interface conversion: error is syscall.Errno, not *fs.PathError
+					if pathError, ok := err.(*os.PathError); ok && pathError.Path == name {
 						w.Error <- ErrWatchedFileDeleted
-						w.RemoveRecursive(name)
+						w.removeRecursive(name)
 					}
-					w.mu.Lock()
 				} else {
 					w.Error <- err
 				}
@@ -498,12 +507,11 @@ func (w *Watcher) retrieveFileList() (fileList map[string]os.FileInfo) {
 		} else {
 			if list, err = w.list(name); err != nil {
 				if os.IsNotExist(err) {
-					w.mu.Unlock()
-					if name == err.(*os.PathError).Path {
+					// panic: interface conversion: error is syscall.Errno, not *fs.PathError
+					if pathError, ok := err.(*os.PathError); ok && pathError.Path == name {
 						w.Error <- ErrWatchedFileDeleted
-						w.Remove(name)
+						w.remove(name)
 					}
-					w.mu.Lock()
 				} else {
 					w.Error <- err
 				}
