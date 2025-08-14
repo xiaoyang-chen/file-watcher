@@ -58,6 +58,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"regexp"
 
 	"github.com/radovskyb/watcher"
 )
