@@ -315,16 +315,6 @@ func (w *Watcher) listRecursive(name string) (fileList map[string]os.FileInfo, e
 			err = inErr
 			return
 		}
-		for _, f := range w.ffh {
-			switch err = f(info, path); err {
-			case nil:
-			case ErrSkip:
-				err = nil
-				return
-			default:
-				return
-			}
-		}
 		// If path is ignored and it's a directory, skip the directory. If it's
 		// ignored and it's a single file, skip the file.
 		var isHidden bool
@@ -336,6 +326,17 @@ func (w *Watcher) listRecursive(name string) (fileList map[string]os.FileInfo, e
 				err = filepath.SkipDir
 			}
 			return
+		}
+		// callbacks after skip ignored files
+		for _, f := range w.ffh {
+			switch err = f(info, path); err {
+			case nil:
+			case ErrSkip:
+				err = nil
+				return
+			default:
+				return
+			}
 		}
 		// Add the path and it's info to the file list.
 		// notice: if a dir skipped by w.ffh but the files below it do not, the files will add into this fileLists
