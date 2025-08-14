@@ -1,6 +1,6 @@
 
 from [github.com/radovskyb/watcher](https://github.com/radovskyb/watcher)  
-base on v1.0.7 git commit sha f5989f8
+base on v1.0.7 git commit sha f5989f8, the pr before but include https://github.com/radovskyb/watcher/pull/127 have already merged into this repo except these prs (https://github.com/radovskyb/watcher/pull/112, https://github.com/radovskyb/watcher/pull/101, https://github.com/radovskyb/watcher/pull/94, https://github.com/radovskyb/watcher/pull/90, https://github.com/radovskyb/watcher/pull/87, https://github.com/radovskyb/watcher/pull/80, https://github.com/radovskyb/watcher/pull/65, https://github.com/radovskyb/watcher/pull/61)
 
 # watcher
 
