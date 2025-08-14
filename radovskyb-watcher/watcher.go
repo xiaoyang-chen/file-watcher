@@ -211,7 +211,7 @@ func (w *Watcher) Add(name string) (err error) {
 	// If name is on the ignored list or if hidden files are
 	// ignored and name is a hidden file or directory, simply return.
 	var isHidden bool
-	if isHidden, err = isHiddenFile(name); err != nil {
+	if isHidden, err = isHiddenFileEx(name); err != nil {
 		return
 	}
 	if _, ignored := w.ignored[name]; ignored || (isHidden && w.ignoreHidden) {
@@ -265,7 +265,7 @@ func (w *Watcher) list(name string) (fileList map[string]os.FileInfo, err error)
 outer:
 	for _, fInfo = range fInfoList {
 		path = filepath.Join(name, fInfo.Name())
-		if isHidden, err = isHiddenFile(path); err != nil {
+		if isHidden, err = isHiddenFileEx(path); err != nil {
 			return
 		}
 		if _, ignored := w.ignored[path]; ignored || (isHidden && w.ignoreHidden) {
@@ -318,7 +318,7 @@ func (w *Watcher) listRecursive(name string) (fileList map[string]os.FileInfo, e
 		// If path is ignored and it's a directory, skip the directory. If it's
 		// ignored and it's a single file, skip the file.
 		var isHidden bool
-		if isHidden, err = isHiddenFile(path); err != nil {
+		if isHidden, err = isHiddenFileEx(path); err != nil {
 			return
 		}
 		if _, ignored := w.ignored[path]; ignored || (isHidden && w.ignoreHidden) {
